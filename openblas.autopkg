@@ -1,0 +1,111 @@
+nuget
+{
+    nuspec
+    {
+        id = bonsai.openblas;
+        version : 0.2.14;
+        title: OpenBLAS;
+        authors: { Zhang Xianyi, Wang Qian, Werner Saar };
+        licenseUrl: "https://github.com/xianyi/OpenBLAS/blob/develop/LICENSE";
+        projectUrl: "http://www.openblas.net/";
+        requireLicenseAcceptance: false;
+        summary: @"OpenBLAS is an optimized BLAS library based on GotoBLAS2
+                   1.13 BSD version.";
+        description: @"OpenBLAS is an optimized BLAS library based on GotoBLAS2
+                       1.13 BSD version. OpenBLAS headers and dlls compiled
+                       with mingw for 32bit and 64bit windows. No debug
+                       symbols.";
+        copyright: Copyright 2015;
+        tags: { native, CoApp, cpp, blas, openblas, nativepackage };
+    };
+
+    files
+    {
+        // Create a bin path pointing to bin in the default package
+        // ('bin' puts files in a redist package)
+        defaultbin += {
+            #output {
+                package = default;
+            };
+            #add-each-file : ::nuget.[redist]targets.[${condition}].CopyToOutput;
+            #destination : ${d_bin};
+        };
+
+        // The header files are the same for each configuration so we can
+        // just copy one of the builds extracted headers
+        nestedInclude: {
+            #destination = ${d_include};
+            ".\openblas_config.h";
+            ".\OpenBLAS-v0.2.14-Win64-int32\include\cblas.h";
+            ".\OpenBLAS-v0.2.14-Win64-int32\include\f77blas.h";
+            ".\OpenBLAS-v0.2.14-Win64-int32\include\lapacke.h";
+            ".\OpenBLAS-v0.2.14-Win64-int32\include\lapacke_config.h";
+            ".\OpenBLAS-v0.2.14-Win64-int32\include\lapacke_mangling.h";
+            ".\OpenBLAS-v0.2.14-Win64-int32\include\lapacke_utils.h";
+        };
+
+        config: {
+            #destination = ${pkg_root};
+            ".\*.cmake";
+        };
+
+        [dynamic,x64] {
+            lib: {
+                #destination = ${build_root}\lib\x64\int32\dynamic;
+                ".\OpenBLAS-v0.2.14-Win64-int32\lib\libopenblas.dll.a";
+            };
+            defaultbin: {
+                #destination = ${build_root}\bin\x64\int32\dynamic;
+                ".\OpenBLAS-v0.2.14-Win64-int32\bin\libopenblas.dll";
+                ".\mingw64_dll\*.dll";
+            };
+        };
+        [static,x64] {
+            lib: {
+                #destination = ${build_root}\lib\x64\int32\static;
+                ".\OpenBLAS-v0.2.14-Win64-int32\lib\libopenblas.a";
+            };
+        };
+        //[dynamic,x64,int64] {
+        //    lib: {
+        //        #destination = ${build_root}\lib\x64\int64\dynamic;
+        //        ".\OpenBLAS-v0.2.14-Win64-int64\lib\libopenblas.dll.a";
+        //    };
+        //    defaultbin: {
+        //        #destination = ${build_root}\bin\x64\int64\dynamic;
+        //        ".\OpenBLAS-v0.2.14-Win64-int64\bin\libopenblas.dll";
+        //        ".\mingw64_dll\*.dll";
+        //    };
+        //};
+        //[static,x64,int64] {
+        //    lib: {
+        //        #destination = ${build_root}\lib\x64\int64\static;
+        //        ".\OpenBLAS-v0.2.14-Win64-int64\lib\libopenblas.a";
+        //    };
+        //};
+        [dynamic,Win32] {
+            lib: {
+                #destination = ${build_root}\lib\Win32\int32\dynamic;
+                ".\OpenBLAS-v0.2.14-Win32\lib\libopenblas.dll.a";
+            };
+            defaultbin: {
+                #destination = ${build_root}\bin\Win32\int32\dynamic;
+                ".\OpenBLAS-v0.2.14-Win32\bin\libopenblas.dll";
+                ".\mingw32_dll\*.dll";
+            };
+        };
+        [static,Win32] {
+            lib: {
+                #destination = ${build_root}\lib\Win32\int32\static;
+                ".\OpenBLAS-v0.2.14-Win32\lib\libopenblas.a";
+            };
+        };
+    };
+
+    targets {
+        Includes += ${pkg_root}/${d_include};
+        //[int64]
+        //    Defines += OPENBLAS_USE64BITINT;
+    };
+}
+
