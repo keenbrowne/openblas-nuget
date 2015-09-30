@@ -41,13 +41,18 @@ set_target_properties(openblas_shared_lib PROPERTIES
 )
 
 set(openblas_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/build/native/include")
+set(OpenBLAS_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/build/native/include")
 set(openblas_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/build/native/include")
 
 if (openblas_STATIC)
     set (openblas_LIBRARY openblas_static_lib)
+    # Caffe doesn't spell out library and instead uses LIB
+    set (OpenBLAS_LIB openblas_static_lib)
     set (openblas_LIBRARIES openblas_static_lib)
 else ()
     set (openblas_LIBRARY openblas_shared_lib)
+    # Caffe doesn't spell out library and instead uses LIB
+    set (OpenBLAS_LIB openblas_shared_lib)
     set (openblas_LIBRARIES openblas_shared_lib)
 endif()
 
